@@ -2,10 +2,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend-deployment
+  namespace: student-261347
   labels:
     app: frontend
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app: frontend
@@ -16,7 +17,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: frontend-image:latest
+          image: frontend-image:latest #jakuboleksy/frontend
           imagePullPolicy: IfNotPresent
           resources:
             limits:

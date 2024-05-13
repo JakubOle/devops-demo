@@ -8,6 +8,11 @@
 # testing
 /coverage
 
+#3 pliki 
+backend-deploy.yaml
+mongo-deploy.yaml
+deployment.yaml
+
 # production
 /build
 

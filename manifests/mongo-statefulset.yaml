@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo
+  namespace: student-261347
+spec:
+  serviceName: "mongo"
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+      - name: mongo
+        image: mongo:4.4.6
+        env:
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mongo-secret
+              key: MONGO_INITDB_ROOT_PASSWORD
+        - name: MONGO_INITDB_ROOT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mongo-secret
+              key: MONGO_INITDB_ROOT_USERNAME
+        - name: MONGODB_RW_HOST
+          value: mongo-rw
+        - name: MONGODB_RO_HOST
+          value: mongo-ro
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: mongo-pvc
+          mountPath: /data/db
+  volumeClaimTemplates:
+  - metadata:
+      name: mongo-pvc
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi

@@ -17,16 +17,23 @@ spec:
     spec:
       containers:
         - name: backend
-          image: backend-image:latest #jakuboleksy/backend
-          envFrom:
-            - configMapRef:
-                name: backend-config
-            - secretRef:
-                name: backend-secret
-          resources:
-            limits:
-              memory: "128Mi"
-              cpu: "500m"
+          image: jakuboleksy/docker-backend
+          env:
+            - name: MONGODB_HOST
+              valueFrom:
+                configMapKeyRef: 
+                  name: backend-config
+                  key: host 
+            - name: MONGODB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: MONGO_INITDB_ROOT_PASSWORD
+            - name: MONGODB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: MONGO_INITDB_ROOT_USERNAME
           ports:
           - containerPort: 5000
           readinessProbe:
@@ -41,17 +48,3 @@ spec:
               port: 5000
             failureThreshold: 30
             periodSeconds: 10
----
-apiVersion: v1
-kind: Service
-metadata: 
-  name: backend-service
-spec:
-  type: NodePort
-  selector:
-    app: backend
-  ports:
-    - protocol: TCP
-      port: 5000
-      targetPort: 5000
-      nodePort: 30001

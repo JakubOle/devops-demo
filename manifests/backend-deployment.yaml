@@ -19,21 +19,20 @@ spec:
         - name: backend
           image: jakuboleksy/docker-backend
           env:
-            - name: MONGODB_HOST
-              valueFrom:
-                configMapKeyRef: 
-                  name: backend-config
-                  key: host 
-            - name: MONGODB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: mongo-secret
-                  key: MONGO_INITDB_ROOT_PASSWORD
-            - name: MONGODB_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: mongo-secret
-                  key: MONGO_INITDB_ROOT_USERNAME
+          - name: MONGODB_RW_HOST
+            value: mongo-rw
+          - name: MONGODB_RO_HOST
+            value: mongo-ro
+          - name: MONGODB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: MONGO_INITDB_ROOT_PASSWORD
+                name: mongo-secret
+          - name: MONGODB_USERNAME
+            valueFrom:
+              secretKeyRef:
+                key: MONGO_INITDB_ROOT_USERNAME
+                name: mongo-secret
           ports:
           - containerPort: 5000
           readinessProbe:
